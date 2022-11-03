@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)PMX.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Point.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GraphPoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PointExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PointsLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ThreeOpt.cs" />

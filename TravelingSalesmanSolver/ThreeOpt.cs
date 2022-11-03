@@ -1,66 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace TravelingSalesmanSolver
 {
     public class ThreeOpt
     {
 
-        Point[] FirstDefault;
-        Point[] SecondDefault;
 
-        public Point[] BestSolution { get; set; }
+        public GraphPoint[] BestSolution { get; set; }
         public double BestDistance { get; set; }
         
-        public ThreeOpt(Point[] FirstDefault, Point[] SecondDefault)
+        public ThreeOpt(GraphPoint[] points)
         {
-            this.FirstDefault = FirstDefault;
-            this.SecondDefault = SecondDefault;
-            BestSolution = FirstDefault;
-            BestDistance = PointExtension.DistanceSum(FirstDefault);
+            
+            BestSolution = points;
+            BestDistance = PointExtension.DistanceSum(points);
         }
 
-        public void RunRound()
+
+        public GraphPoint[] RunRound()
         {
-            for (int i = 0; i < FirstDefault.Count() - 2; i++)
+            double currentDistance = BestDistance;
+
+
+            for (int i = 0; i < BestSolution.Count() - 2; i++)
             {
-                for (int j = i + 1; j < FirstDefault.Count() - 1; j++)
+                for (int j = i + 1; j < BestSolution.Count() - 1; j++)
                 {
-                    ThreeOptSwap(FirstDefault, i, j, FirstDefault.Count());
-                    ThreeOptSwap(SecondDefault, i, j, FirstDefault.Count());
+                    for (int k = j + 1; k < BestSolution.Count(); k++)
+                    {
+                        if (i == 0 && k == BestSolution.Count() - 1)
+                            continue;
+
+                        var newSolution = BestSolution.Clone() as GraphPoint[];
+                        Array.Reverse(newSolution, i, j - i);
+                        Array.Reverse(newSolution, j + 1, k - j);
+                        if (i == 0)
+                            Array.Reverse(newSolution, k, BestSolution.Count() - 1 - k);
+
+                        double newDistance = PointExtension.DistanceSum(newSolution);
+                        if (newDistance < BestDistance)
+                        {
+                            BestSolution = newSolution;
+                            BestDistance = newDistance;
+                        }
+                    }
                 }
             }
-        }
+            return BestSolution;
 
-        private void ThreeOptSwap(Point[] points, int i, int j, int k)
-        {
-            List<Point> deepCopy = points.Select(p => p.Clone()).ToList();
-
-            List<Point> a = deepCopy.GetRange(0, i);
-            List<Point> b = deepCopy.GetRange(i, j - i);
-            b.Reverse();
-            List<Point> c = deepCopy.GetRange(j, k-j);
-        
-            Point[] firstResult = a.Concat(c).Concat(b).ToArray();
-            var firstResultDistance = PointExtension.DistanceSum(firstResult);
-            if(firstResultDistance < BestDistance)
-            {
-                BestDistance = firstResultDistance;
-                BestSolution = firstResult.Select(p => p.Clone()).ToArray();
-            }
-            c.Reverse();
-            Point[] secondResult = a.Concat(b).Concat(c).ToArray();
-            var secondResultDistance = PointExtension.DistanceSum(secondResult);
-            if (secondResultDistance < BestDistance)
-            {
-                BestDistance = secondResultDistance;
-                BestSolution = secondResult.Select(p => p.Clone()).ToArray();
-            }
         }
-            
 
     }
 
-    
+
 }

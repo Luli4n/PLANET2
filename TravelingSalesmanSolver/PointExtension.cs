@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace TravelingSalesmanSolver
 {
     public static class PointExtension
     {
 
-        public static double DistanceSum(Point[] points)
+        public static double DistanceSum(GraphPoint[] points)
         {
             
             double sum = 0;

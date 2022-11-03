@@ -8,16 +8,16 @@ namespace TravelingSalesmanSolver
 {
     public static class PointsLoader
     {
-        public static Point[] LoadPoints(string filePath)
+        public static GraphPoint[] LoadPoints(string filePath)
         {
             string[] lines = System.IO.File.ReadAllLines(filePath);
 
-            Point[] points = new Point[lines.Length];
+            GraphPoint[] points = new GraphPoint[lines.Length];
 
             for (int i = 0; i < lines.Length; i++)
             {
                 string[] line = lines[i].Split(' ');
-                points[i] = new Point { Id = int.Parse(line[0]), X = double.Parse(line[1], CultureInfo.InvariantCulture), Y = double.Parse(line[2], CultureInfo.InvariantCulture) };
+                points[i] = new GraphPoint { Id = int.Parse(line[0]), X = double.Parse(line[1], CultureInfo.InvariantCulture), Y = double.Parse(line[2], CultureInfo.InvariantCulture) };
             }
             return points;
         }

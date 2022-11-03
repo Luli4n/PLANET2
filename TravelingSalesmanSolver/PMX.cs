@@ -1,36 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace TravelingSalesmanSolver
 {
     public class PMX
     {
-        private Point[] Points;
+        private GraphPoint[] Points;
         
-        private Point[] FirstParent;
-        private Point[] SecondParent;
-        private Point[] FirstChild;
-        private Point[] SecondChild;
+        private GraphPoint[] FirstParent;
+        private GraphPoint[] SecondParent;
+        private GraphPoint[] FirstChild;
+        private GraphPoint[] SecondChild;
 
         public int subSequenceStart;
         public int subSequenceEnd;
 
-        public Point[] BestFirst { get; set; }
-        private double BestFirstDistance;
-        public Point[] BestSecond { get; set; }
-        private double BestSecondDistance;
+        private GraphPoint[] Best { get; set; }
+        private double BestDistance;
+
 
         public bool IsFinished { get; private set; } = false;
-        public PMX(Point[] points)
+        public PMX(GraphPoint[] points)
         {
             Points = points.Select(p=>p.Clone()).ToArray();
         }
 
-        public void RunRound()
+        public GraphPoint[] RunRound()
         {
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 InitializeParents();
                 InitializeChildren(Points.Count() / 2);
@@ -40,6 +40,8 @@ namespace TravelingSalesmanSolver
                 FirstParent = FirstChild;
                 SecondParent = SecondChild;
             }
+
+            return Best;
 
         }
                     
@@ -57,8 +59,8 @@ namespace TravelingSalesmanSolver
             subSequenceStart = rng.Next(0, Points.Count() - subSequenceLength);
             subSequenceEnd = subSequenceStart + subSequenceLength;
             
-            FirstChild = new Point[Points.Count()];
-            SecondChild = new Point[Points.Count()];
+            FirstChild = new GraphPoint[Points.Count()];
+            SecondChild = new GraphPoint[Points.Count()];
             
             for(int i=subSequenceStart; i<subSequenceEnd; i++)
             {
@@ -67,7 +69,7 @@ namespace TravelingSalesmanSolver
             }
         }
 
-        public void SecondStep(Point[] firstParent, Point[] secondParent, Point[] child)
+        private void SecondStep(GraphPoint[] firstParent, GraphPoint[] secondParent, GraphPoint[] child)
         {
             for (int i = subSequenceStart; i < subSequenceEnd; i++)
             {
@@ -77,7 +79,7 @@ namespace TravelingSalesmanSolver
                     continue;
                 }
                 
-                Point relocationPoint = secondParent[i].Clone();
+                GraphPoint relocationPoint = secondParent[i].Clone();
                 int firstParentId = firstParent[i].Id;
                 while (true)
                 {
@@ -104,18 +106,18 @@ namespace TravelingSalesmanSolver
             var firstChildDistance = PointExtension.DistanceSum(FirstChild);
             var secondChildDistance = PointExtension.DistanceSum(SecondChild);
             
-            if (BestFirst is null || firstChildDistance < BestFirstDistance)
+            if (Best is null || firstChildDistance < BestDistance)
             {
-                BestFirst = FirstChild.Select(c => c.Clone()).ToArray();
-                BestFirstDistance = firstChildDistance;
+                Best = FirstChild.Select(c => c.Clone()).ToArray();
+                BestDistance = firstChildDistance;
             }
             
-            if(BestSecond is null || secondChildDistance < BestSecondDistance)
+            if(Best is null || secondChildDistance < BestDistance)
             {
-                BestSecond = SecondChild.Select(c => c.Clone()).ToArray();
-                BestSecondDistance = secondChildDistance;
+                Best = SecondChild.Select(c => c.Clone()).ToArray();
+                BestDistance = secondChildDistance;
             }
-        }
-        
+        } 
+
     }
 }
