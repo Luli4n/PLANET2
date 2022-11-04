@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,16 +13,25 @@ using TravelingSalesmanSolver;
 
 namespace UIApp
 {
-    public class CanvasDrawer 
+    public class CanvasDrawer : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
         public double Width { get; set; }
         public double Height { get; set; }
         private Window _Window;
 
         private GraphPoint[] _Points;
 
-        public GraphPoint[] Points { get => _Points; set =>
-                _Points = value;}
+        public GraphPoint[] Points { get => _Points; set
+            {
+                _Points = value; OnPropertyChanged();
+            }
+        }
 
 
         public int SolutionsCount { get; set; } = 0;
@@ -78,6 +88,14 @@ namespace UIApp
                 line.Y1 = points[i].Y;
                 line.Y2 = points[i+1].Y;
                 _Canvas.Children.Add(line);
+                Ellipse ellipse = new Ellipse();
+                ellipse.Width = 5;
+                ellipse.Height = 5;
+                ellipse.Fill = System.Windows.Media.Brushes.Red;
+                Canvas.SetLeft(ellipse, points[i].X - 2.5);
+                Canvas.SetTop(ellipse, points[i].Y - 2.5);
+                _Canvas.Children.Add(ellipse);
+
             }
             Line lastLine = new Line();
             lastLine.Visibility = System.Windows.Visibility.Visible;
@@ -89,16 +107,14 @@ namespace UIApp
             lastLine.Y2 = points[points.Count()-1].Y;
             _Canvas.Children.Add(lastLine);
 
-            for (int i = 0; i < points.Count(); i++)
-            {
-                Ellipse ellipse = new Ellipse();
-                ellipse.Width = 5;
-                ellipse.Height = 5;
-                ellipse.Fill = System.Windows.Media.Brushes.Red;
-                Canvas.SetLeft(ellipse, points[i].X -2.5);
-                Canvas.SetTop(ellipse, points[i].Y-2.5);
-                _Canvas.Children.Add(ellipse);
-            }
+            Ellipse lastElipse = new Ellipse();
+            lastElipse.Width = 5;
+            lastElipse.Height = 5;
+            lastElipse.Fill = System.Windows.Media.Brushes.Red;
+            Canvas.SetLeft(lastElipse, points[points.Count() - 1].X -2.5);
+            Canvas.SetTop(lastElipse, points[points.Count() - 1].Y-2.5);
+            _Canvas.Children.Add(lastElipse);
+            
 
         }
 

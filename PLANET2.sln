@@ -7,7 +7,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TravelingSalesmanSolver", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskPoolProcess", "TaskPoolProcess\TaskPoolProcess.csproj", "{261A65C5-8DC5-49E0-B57D-D352F6804897}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIApp", "UIApp\UIApp.csproj", "{2C30C2A0-6316-4566-A65C-583B7D130FAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UIApp", "UIApp\UIApp.csproj", "{2C30C2A0-6316-4566-A65C-583B7D130FAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThreadPoolProcess", "ThreadPoolProcess\ThreadPoolProcess.csproj", "{48BC440D-CE61-4F07-8BC8-4F9D7835F8BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{2C30C2A0-6316-4566-A65C-583B7D130FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C30C2A0-6316-4566-A65C-583B7D130FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C30C2A0-6316-4566-A65C-583B7D130FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BC440D-CE61-4F07-8BC8-4F9D7835F8BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BC440D-CE61-4F07-8BC8-4F9D7835F8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BC440D-CE61-4F07-8BC8-4F9D7835F8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BC440D-CE61-4F07-8BC8-4F9D7835F8BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -34,5 +40,6 @@ Global
 		TravelingSalesmanSolver\TravelingSalesmanSolver.projitems*{0fd3b353-2ef7-4cb3-a2f0-96dfbdeae663}*SharedItemsImports = 13
 		TravelingSalesmanSolver\TravelingSalesmanSolver.projitems*{261a65c5-8dc5-49e0-b57d-d352f6804897}*SharedItemsImports = 5
 		TravelingSalesmanSolver\TravelingSalesmanSolver.projitems*{2c30c2a0-6316-4566-a65c-583b7d130fab}*SharedItemsImports = 5
+		TravelingSalesmanSolver\TravelingSalesmanSolver.projitems*{48bc440d-ce61-4f07-8bc8-4f9d7835f8be}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

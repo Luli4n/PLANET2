@@ -28,14 +28,15 @@ namespace UIApp
     public partial class MainWindow : Window
     {
         private CanvasDrawer _CanvasDrawer;
-        private const double _margin = 200;
+        private const double _margin = 300;
         
 
         public MainWindow()
         {
             InitializeComponent();
-            _CanvasDrawer = new CanvasDrawer(this,this.Width - _margin, this.Height);
+            _CanvasDrawer = new CanvasDrawer(this,this.Width - _margin, this.Height * 2.0/3.0);
             this.SizeChanged += OnWindowSizeChanged;
+            DataContext = _CanvasDrawer;
         }
 
         protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -43,7 +44,7 @@ namespace UIApp
             double newWindowHeight = e.NewSize.Height;
             double newWindowWidth = e.NewSize.Width;
             _CanvasDrawer.Width = newWindowWidth - _margin;
-            _CanvasDrawer.Height = newWindowHeight;
+            _CanvasDrawer.Height = newWindowHeight * 2.0/3.0;
         }
 
         protected void File_Button(object sender, RoutedEventArgs e)
@@ -71,7 +72,14 @@ namespace UIApp
         private void RunCalculations()
         {
             StartServer();
-            Process.Start("../net6.0/TaskPoolProcess.exe", FileTextBox.Text + " " + AmountBox.Text);
+            if ((bool)TasksRadioButton.IsChecked)
+            {
+                Process.Start("../net6.0/TaskPoolProcess.exe", $"\"{FileTextBox.Text}\" {AmountBox.Text} {Phase1TextBox.Text} {Phase2TextBox.Text}");
+            }
+            if ((bool)ThreadsRadioButton.IsChecked)
+            {
+                Process.Start("../net6.0/ThreadPoolProcess.exe", $"\"{FileTextBox.Text}\" {AmountBox.Text} {Phase1TextBox.Text} {Phase2TextBox.Text}");
+            }
         }
 
         private void StartServer()

@@ -7,17 +7,17 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel HorizontalAlignment="Left" Width="200">
+        <StackPanel HorizontalAlignment="Left" Width="300">
             <TextBlock Margin="10 0 0 0" FontWeight="Bold" Height="20"> File</TextBlock>
             <StackPanel Orientation="Horizontal">
-                <TextBox Name="FileTextBox" Width="130" Height="20"></TextBox>
+                <TextBox Name="FileTextBox" Width="200" Height="20"></TextBox>
                 <Button Width="50" Height="20" Content="Browse" Click="File_Button"></Button>
             </StackPanel>
 
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">Mechanism</TextBlock>
             <StackPanel Orientation="Horizontal">
                 <RadioButton Name="TasksRadioButton" Margin="10" IsChecked="True">Tasks</RadioButton>
-                <RadioButton Name="ProcessesRadioButton" Margin="10">Processes</RadioButton>
+                <RadioButton Name="ThreadsRadioButton" Margin="10">Threads</RadioButton>
             </StackPanel>
 
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">How many</TextBlock>
@@ -28,14 +28,14 @@
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">How long</TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Height="20" Width="50">Phase 1</TextBlock>
-                <TextBox Name="Phase1TextBox" Width="80" Height="20"></TextBox>
+                <TextBox Name="Phase1TextBox" Width="80" Height="20">10</TextBox>
                 <ComboBox Name="Phase1ComboBox">
                     <ComboBoxItem IsSelected="True">s</ComboBoxItem>
                 </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Name="Phase2TextBox" Height="20" Width="50">Phase 2</TextBlock>
-                <TextBox Width="80" Height="20"></TextBox>
+                <TextBlock Height="20" Width="50">Phase 2</TextBlock>
+                <TextBox Name="Phase2TextBox" Width="80" Height="20">10</TextBox>
                 <ComboBox Name="Phase2ComboBox">
                     <ComboBoxItem IsSelected="True">s</ComboBoxItem>
                 </ComboBox>
@@ -44,21 +44,28 @@
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">Progress and Results</TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Height="20" Width="100">Best Result</TextBlock>
-                <TextBlock Name="BestResult" Height="20" Width="50">Result</TextBlock>
+                <TextBlock Name="BestResult" Height="20" Width="100">Result</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Height="20" Width="100">Solution Count</TextBlock>
-                <TextBlock Name="SolutionCount" Height="20" Width="50">Result</TextBlock>
+                <TextBlock Name="SolutionCount" Height="20" Width="100">Result</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Margin="10" Width="60" Height="20" Click="RunCalculations_Button">Start</Button>
                 <Button Width="60" Height="20">Exit</Button>
             </StackPanel>
         </StackPanel>
-        <Canvas Margin="200,0,0,0" Name="PointCanvas">
-            <Ellipse Panel.ZIndex="2" Fill="Red" Canvas.Left="20" Canvas.Top="235" Width="3" Height="3" />
-
-        </Canvas>
+        <Grid Margin="300,0, 0,0">
+            <Canvas Grid.Row="0" Grid.RowSpan="2" Name="PointCanvas">
+            </Canvas>
+            <DataGrid Grid.Row="2" x:Name="Details" IsReadOnly="True" ColumnWidth="*" ItemsSource="{Binding Points}" />
+               
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
     </Grid>
 
 </Window>

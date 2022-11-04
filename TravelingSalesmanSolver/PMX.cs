@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.IO;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace TravelingSalesmanSolver
 {
@@ -20,7 +21,7 @@ namespace TravelingSalesmanSolver
         public int subSequenceStart;
         public int subSequenceEnd;
 
-        private GraphPoint[] Best { get; set; }
+        public GraphPoint[] Best { get; set; }
         private double BestDistance;
         private StreamWriter Writer;
 
@@ -33,21 +34,21 @@ namespace TravelingSalesmanSolver
             InitializeParents();
         }
 
-        public GraphPoint[] RunRound()
+        public GraphPoint[] RunRound(CancellationToken token)
         {
-
-
-
-
-            InitializeChildren(Points.Count() / 2);
-            SecondStep(FirstParent, SecondParent, FirstChild);
-            SecondStep(SecondParent, FirstParent, SecondChild);
-            SetBestSolution();
-            FirstParent = FirstChild;
-            SecondParent = SecondChild;
-            
-
-            return Best;
+            while (true)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    return Best;
+                }
+                InitializeChildren(Points.Count() / 2);
+                SecondStep(FirstParent, SecondParent, FirstChild);
+                SecondStep(SecondParent, FirstParent, SecondChild);
+                SetBestSolution();
+                FirstParent = FirstChild;
+                SecondParent = SecondChild;
+            }
 
         }
                     

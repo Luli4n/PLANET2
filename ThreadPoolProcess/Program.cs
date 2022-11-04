@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO.Pipes;
-using System.Threading.Tasks;
+﻿using System.IO.Pipes;
 using TravelingSalesmanSolver;
 
 
@@ -29,28 +26,31 @@ GlobalBestSolution.BestDistance = PointExtension.DistanceSum(points);
 
 CancellationTokenSource source = new CancellationTokenSource();
 CancellationToken token = source.Token;
+source.CancelAfter(firstPhaseSeconds * 1000);
 
-source.CancelAfter(firstPhaseSeconds*1000);
-TaskFactory factory = new TaskFactory(token);
 List<PMX> pmxList = new List<PMX>();
-List<Task> pmxTasks = new List<Task>();
-
+List<Thread> threads = new List<Thread>();
 for (int i = 0; i < taskCount; i++)
 {
     PMX pmx = new PMX(writer, points.Select(p => p.Clone()).ToArray());
     pmxList.Add(pmx);
-    var task = factory.StartNew(() =>
+    var thread = new Thread((obj) =>
     {
+        CancellationToken token = (CancellationToken)obj;
         pmx.RunRound(token);
-    },token);
+    });
 
-    pmxTasks.Add(task);
+    thread.Start(token);
+    threads.Add(thread);
+}
+for (int i =0;i<threads.Count; i++)
+{
+    threads[i].Join();
 }
 
-Task.WaitAll(pmxTasks.ToArray());
 
 
-if(!pmxList.Where(p => p.Best != null).Any())
+if (!pmxList.Where(p => p.Best != null).Any())
 {
     return;
 }
@@ -70,25 +70,26 @@ var nextTourCandidates = pmxList.Where(p => p.Best != null).Where(t => PointExte
 
 
 List<ThreeOpt> threeOptList = new List<ThreeOpt>();
-List<Task> threeOptTasks = new List<Task>();
 CancellationTokenSource source1 = new CancellationTokenSource();
 CancellationToken token1 = source1.Token;
-TaskFactory factory1 = new TaskFactory(token);
-source1.CancelAfter(secondPhaseSeconds*1000);
-
+source1.CancelAfter(secondPhaseSeconds * 1000);
+List<Thread> threads1 = new List<Thread>();
 for (int i = 0; i < nextTourCandidates.Count(); i++)
 {
 
     ThreeOpt threeOpt = new ThreeOpt(writer, nextTourCandidates[i].Select(p => p.Clone()).ToArray());
     threeOptList.Add(threeOpt);
-    var task = factory1.StartNew(() =>
+    var thread = new Thread((obj) =>
     {
+        CancellationToken token1 = (CancellationToken)obj;
         threeOpt.RunRound(token1);
-    },token1);
+    });
 
-    threeOptTasks.Add(task);
+    thread.Start(token1);
+    threads1.Add(thread);
 }
 
-
-Task.WaitAll(threeOptTasks.ToArray());
-
+for (int i = 0; i < threads1.Count; i++)
+{
+    threads1[i].Join();
+}
