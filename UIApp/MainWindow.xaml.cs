@@ -69,6 +69,16 @@ namespace UIApp
             RunCalculations();
         }
 
+        protected void StopCalculations_Button(object sender, RoutedEventArgs e)
+        {
+            var client = new NamedPipeClientStream("PipeOfCancelation");
+            client.Connect();
+            StreamReader reader = new StreamReader(client);
+            StreamWriter writer = new StreamWriter(client);
+            writer.WriteLine("Exit");
+            writer.Flush();
+        }
+
         private void RunCalculations()
         {
             StartServer();

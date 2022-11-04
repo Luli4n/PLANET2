@@ -5,6 +5,29 @@ using System.Threading.Tasks;
 using TravelingSalesmanSolver;
 
 
+void StartServer(CancellationTokenSource c1, CancellationTokenSource c2)
+{
+    Task.Factory.StartNew(() =>
+    {
+        var server = new NamedPipeServerStream("PipeOfCancelation");
+        server.WaitForConnection();
+        StreamReader reader = new StreamReader(server);
+        StreamWriter writer = new StreamWriter(server);
+        
+        var line = reader.ReadLine();
+        if (line == "Exit")
+        {
+            c1.Cancel();
+            c2.Cancel();
+        }
+            
+        writer.Flush();
+        
+        server.Close();
+    });
+}
+
+
 string pointsPath = args[0];
 int taskCount;
 int.TryParse(args[1], out taskCount);
@@ -28,7 +51,10 @@ GlobalBestSolution.BestDistance = PointExtension.DistanceSum(points);
 
 
 CancellationTokenSource source = new CancellationTokenSource();
+CancellationTokenSource source1 = new CancellationTokenSource();
 CancellationToken token = source.Token;
+
+StartServer(source, source1);
 
 source.CancelAfter(firstPhaseSeconds*1000);
 TaskFactory factory = new TaskFactory(token);
@@ -46,11 +72,17 @@ for (int i = 0; i < taskCount; i++)
 
     pmxTasks.Add(task);
 }
+try
+{
+    Task.WaitAll(pmxTasks.ToArray());
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Canceled");
+}
 
-Task.WaitAll(pmxTasks.ToArray());
 
-
-if(!pmxList.Where(p => p.Best != null).Any())
+if (!pmxList.Where(p => p.Best != null).Any())
 {
     return;
 }
@@ -71,7 +103,7 @@ var nextTourCandidates = pmxList.Where(p => p.Best != null).Where(t => PointExte
 
 List<ThreeOpt> threeOptList = new List<ThreeOpt>();
 List<Task> threeOptTasks = new List<Task>();
-CancellationTokenSource source1 = new CancellationTokenSource();
+
 CancellationToken token1 = source1.Token;
 TaskFactory factory1 = new TaskFactory(token);
 source1.CancelAfter(secondPhaseSeconds*1000);
@@ -89,6 +121,12 @@ for (int i = 0; i < nextTourCandidates.Count(); i++)
     threeOptTasks.Add(task);
 }
 
-
-Task.WaitAll(threeOptTasks.ToArray());
+try
+{
+    Task.WaitAll(threeOptTasks.ToArray());
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Canceled");
+}
 

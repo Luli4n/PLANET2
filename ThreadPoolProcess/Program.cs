@@ -2,6 +2,28 @@
 using TravelingSalesmanSolver;
 
 
+void StartServer(CancellationTokenSource c1, CancellationTokenSource c2)
+{
+    Task.Factory.StartNew(() =>
+    {
+        var server = new NamedPipeServerStream("PipeOfCancelation");
+        server.WaitForConnection();
+        StreamReader reader = new StreamReader(server);
+        StreamWriter writer = new StreamWriter(server);
+
+        var line = reader.ReadLine();
+        if (line == "Exit")
+        {
+            c1.Cancel();
+            c2.Cancel();
+        }
+
+        writer.Flush();
+
+        server.Close();
+    });
+}
+
 string pointsPath = args[0];
 int taskCount;
 int.TryParse(args[1], out taskCount);
@@ -9,6 +31,8 @@ int.TryParse(args[1], out taskCount);
 int firstPhaseSeconds, secondPhaseSeconds;
 int.TryParse(args[2], out firstPhaseSeconds);
 int.TryParse(args[3], out secondPhaseSeconds);
+
+
 
 
 
@@ -25,7 +49,11 @@ GlobalBestSolution.BestDistance = PointExtension.DistanceSum(points);
 
 
 CancellationTokenSource source = new CancellationTokenSource();
+CancellationTokenSource source1 = new CancellationTokenSource();
 CancellationToken token = source.Token;
+
+StartServer(source, source1);
+
 source.CancelAfter(firstPhaseSeconds * 1000);
 
 List<PMX> pmxList = new List<PMX>();
@@ -70,7 +98,6 @@ var nextTourCandidates = pmxList.Where(p => p.Best != null).Where(t => PointExte
 
 
 List<ThreeOpt> threeOptList = new List<ThreeOpt>();
-CancellationTokenSource source1 = new CancellationTokenSource();
 CancellationToken token1 = source1.Token;
 source1.CancelAfter(secondPhaseSeconds * 1000);
 List<Thread> threads1 = new List<Thread>();

@@ -52,7 +52,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Margin="10" Width="60" Height="20" Click="RunCalculations_Button">Start</Button>
-                <Button Width="60" Height="20">Exit</Button>
+                <Button Width="60" Height="20" Click="StopCalculations_Button">Exit</Button>
             </StackPanel>
         </StackPanel>
         <Grid Margin="300,0, 0,0">
