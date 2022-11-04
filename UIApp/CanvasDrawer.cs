@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TravelingSalesmanSolver;
 
 namespace UIApp
 {
-    public class CanvasDrawer : INotifyPropertyChanged
+    public class CanvasDrawer 
     {
         public double Width { get; set; }
         public double Height { get; set; }
@@ -19,47 +20,41 @@ namespace UIApp
 
         private GraphPoint[] _Points;
 
-        public GraphPoint[] Points { get => _Points; set { 
-                _Points = value;
-                OnPropertyChanged("Points");
-            } 
-        }
-        public void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, e);
-            Application.Current.Dispatcher.Invoke(new Action(() =>
-            {
-                Draw();
-            }));
-        }
+        public GraphPoint[] Points { get => _Points; set =>
+                _Points = value;}
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        public int SolutionsCount { get; set; } = 0;
+        private DispatcherTimer DispatcherTimer;
+        
         public CanvasDrawer(Window window, double width, double height)
         {
             _Window = window;
             this.Width = width;
             this.Height = height;
+            DispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            DispatcherTimer.Tick += new EventHandler(Draw);
+            DispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 32);
+            DispatcherTimer.Start();
         }
 
-        public void Draw()
+        public void Draw(object sender, EventArgs e)
         {
-            Canvas _Canvas = (Canvas)_Window.FindName("PointCanvas");
+
             if (Points == null)
             {
                 return;
             }
+            Canvas _Canvas = (Canvas)_Window.FindName("PointCanvas");
+            TextBlock sc = (TextBlock)this._Window.FindName("SolutionCount");
+            sc.Text = SolutionsCount.ToString();
             
-            _Canvas.Children.Clear();
-            
+            TextBlock br = (TextBlock)this._Window.FindName("BestResult");
+            br.Text = PointExtension.DistanceSum(Points).ToString();
+
             List<GraphPoint> points = Points.Select(p => p.Clone()).ToList();
             
+            _Canvas.Children.Clear();
             double minX = points.Min(p => p.X);
             double minY = points.Min(p => p.Y);
             points.ForEach(p => { p.X = p.X - minX; p.Y = p.Y - minY; } );

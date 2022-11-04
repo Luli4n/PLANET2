@@ -9,6 +9,7 @@
     <Import_RootNamespace>TravelingSalesmanSolver</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BestSolution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PMX.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GraphPoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PointExtension.cs" />

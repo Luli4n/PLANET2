@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace TravelingSalesmanSolver
 {
@@ -19,27 +22,30 @@ namespace TravelingSalesmanSolver
 
         private GraphPoint[] Best { get; set; }
         private double BestDistance;
+        private StreamWriter Writer;
 
 
         public bool IsFinished { get; private set; } = false;
-        public PMX(GraphPoint[] points)
+        public PMX(StreamWriter writer, GraphPoint[] points)
         {
             Points = points.Select(p=>p.Clone()).ToArray();
+            this.Writer = writer;
+            InitializeParents();
         }
 
         public GraphPoint[] RunRound()
         {
 
-            for (int i = 0; i < 10000; i++)
-            {
-                InitializeParents();
-                InitializeChildren(Points.Count() / 2);
-                SecondStep(FirstParent, SecondParent, FirstChild);
-                SecondStep(SecondParent, FirstParent, SecondChild);
-                SetBestSolution();
-                FirstParent = FirstChild;
-                SecondParent = SecondChild;
-            }
+
+
+
+            InitializeChildren(Points.Count() / 2);
+            SecondStep(FirstParent, SecondParent, FirstChild);
+            SecondStep(SecondParent, FirstParent, SecondChild);
+            SetBestSolution();
+            FirstParent = FirstChild;
+            SecondParent = SecondChild;
+            
 
             return Best;
 
@@ -110,14 +116,40 @@ namespace TravelingSalesmanSolver
             {
                 Best = FirstChild.Select(c => c.Clone()).ToArray();
                 BestDistance = firstChildDistance;
+                WriteToUI(Best);
             }
-            
-            if(Best is null || secondChildDistance < BestDistance)
+
+            if (Best is null || secondChildDistance < BestDistance)
             {
                 Best = SecondChild.Select(c => c.Clone()).ToArray();
                 BestDistance = secondChildDistance;
+                WriteToUI(Best);
             }
-        } 
+            
+        }
+
+        private void WriteToUI(GraphPoint[] points)
+        {
+            double distance = PointExtension.DistanceSum(points);
+            bool write = false;
+            lock (typeof(GlobalBestSolution))
+            {
+                if (distance < GlobalBestSolution.BestDistance)
+                {
+                    GlobalBestSolution.Best = points;
+                    GlobalBestSolution.BestDistance = distance;
+                    write = true;
+                }
+            }
+            if (write)
+            {
+                lock (typeof(StreamWriter))
+                {
+                    Writer.WriteLine(JsonConvert.SerializeObject(points));
+                    Writer.Flush();
+                }
+            }
+        }
 
     }
 }

@@ -29,15 +29,13 @@ namespace UIApp
     {
         private CanvasDrawer _CanvasDrawer;
         private const double _margin = 200;
-
-
+        
 
         public MainWindow()
         {
             InitializeComponent();
             _CanvasDrawer = new CanvasDrawer(this,this.Width - _margin, this.Height);
             this.SizeChanged += OnWindowSizeChanged;
-            _CanvasDrawer.Draw();
         }
 
         protected void OnWindowSizeChanged(object sender, SizeChangedEventArgs e)
@@ -46,7 +44,6 @@ namespace UIApp
             double newWindowWidth = e.NewSize.Width;
             _CanvasDrawer.Width = newWindowWidth - _margin;
             _CanvasDrawer.Height = newWindowHeight;
-            _CanvasDrawer.Draw();   
         }
 
         protected void File_Button(object sender, RoutedEventArgs e)
@@ -64,7 +61,6 @@ namespace UIApp
                 FileTextBox.Text = filename;
             }
             this._CanvasDrawer.Points = PointsLoader.LoadPoints(FileTextBox.Text);
-            _CanvasDrawer.Draw();
         }
 
         protected void RunCalculations_Button(object sender, RoutedEventArgs e)
@@ -75,13 +71,14 @@ namespace UIApp
         private void RunCalculations()
         {
             StartServer();
-            Process.Start("../net6.0/TaskPoolProcess.exe", FileTextBox.Text.ToString() + " 10");
+            Process.Start("../net6.0/TaskPoolProcess.exe", FileTextBox.Text + " " + AmountBox.Text);
         }
 
         private void StartServer()
         {
             Task.Factory.StartNew(() =>
             {
+                _CanvasDrawer.SolutionsCount = 0;
                 var server = new NamedPipeServerStream("PipeOfCalculations");
                 server.WaitForConnection();
                 StreamReader reader = new StreamReader(server);
@@ -89,9 +86,15 @@ namespace UIApp
                 while (true)
                 {
                     var line = reader.ReadLine();
+                    if(line == null)
+                    {
+                        break;
+                    }
                     _CanvasDrawer.Points = JsonConvert.DeserializeObject<GraphPoint[]>(line);
+                    _CanvasDrawer.SolutionsCount++;
                     writer.Flush();
                 }
+                server.Close();
             });
         }
 

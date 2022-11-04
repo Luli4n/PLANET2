@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace TravelingSalesmanSolver
 {
@@ -11,10 +13,13 @@ namespace TravelingSalesmanSolver
 
         public GraphPoint[] BestSolution { get; set; }
         public double BestDistance { get; set; }
-        
-        public ThreeOpt(GraphPoint[] points)
+
+        private StreamWriter Writer { get; set; }
+
+        public ThreeOpt(StreamWriter writer, GraphPoint[] points)
         {
-            
+
+            this.Writer = writer;
             BestSolution = points;
             BestDistance = PointExtension.DistanceSum(points);
         }
@@ -45,6 +50,7 @@ namespace TravelingSalesmanSolver
                         {
                             BestSolution = newSolution;
                             BestDistance = newDistance;
+                            WriteToUI(BestSolution);
                         }
                     }
                 }
@@ -53,6 +59,28 @@ namespace TravelingSalesmanSolver
 
         }
 
+        private void WriteToUI(GraphPoint[] points)
+        {
+            double distance = PointExtension.DistanceSum(points);
+            bool write = false;
+            lock (typeof(GlobalBestSolution))
+            {
+                if (distance < GlobalBestSolution.BestDistance)
+                {
+                    GlobalBestSolution.Best = points;
+                    GlobalBestSolution.BestDistance = distance;
+                    write = true;
+                }
+            }
+            if (write)
+            {
+                lock (typeof(StreamWriter))
+                {
+                    Writer.WriteLine(JsonConvert.SerializeObject(points));
+                    Writer.Flush();
+                }
+            }
+        }
     }
 
 

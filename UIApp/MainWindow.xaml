@@ -22,7 +22,7 @@
 
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">How many</TextBlock>
             <StackPanel>
-                <TextBox Name="AmountTextBox" Width="80" Height="20"></TextBox>
+                <TextBox Name="AmountBox" Width="80" Height="20">1</TextBox>
             </StackPanel>
 
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">How long</TextBlock>
@@ -44,11 +44,11 @@
             <TextBlock Margin="10 10 0 0" FontWeight="Bold" Height="20">Progress and Results</TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Height="20" Width="100">Best Result</TextBlock>
-                <TextBlock Name="BestResultTextBlock" Height="20" Width="50">Result</TextBlock>
+                <TextBlock Name="BestResult" Height="20" Width="50">Result</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Height="20" Width="100">Solution Count</TextBlock>
-                <TextBlock Name="SolutionCountTextBlock" Height="20" Width="50">Result</TextBlock>
+                <TextBlock Name="SolutionCount" Height="20" Width="50">Result</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Margin="10" Width="60" Height="20" Click="RunCalculations_Button">Start</Button>
